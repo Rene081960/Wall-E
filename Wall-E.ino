@@ -295,12 +295,21 @@ void ServoControlContra(int servoOut)
 // Function to move servo to specific position
 void ServoControlInitialize(int servoOut, int waarde)
 {
+  //ServoPWMRange(servoOut, 0, waarde);
   ServoPWM(servoOut, waarde);
 }
 
 void ServoControlContraInitialize(int servoOut, int waarde)
 {
   ServoPWMContra(servoOut, waarde);
+}
+
+void ServoPWMRange(int servoOut, int pos1, int pos2)
+{
+  for (int i = pos1; i <= pos2; i++)
+  {
+    ServoPWM(servoOut, i);
+  }
 }
 
 void ServoPWM(int servoOut, int waarde)
