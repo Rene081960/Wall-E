@@ -42,6 +42,15 @@ boolean isPlaying = false;
 #define in3 5
 #define in4 4
 
+// Servo's last position
+int s1LastPos = 0;
+int s2LastPos = 0;
+int s3LastPos = 0;
+int s4LastPos = 0;
+int s5LastPos = 0;
+int s6LastPos = 0;
+int s7LastPos = 0;
+
 const int motorOffset = 25;
 
 // Voltmeter
@@ -123,29 +132,33 @@ void CheckActions()
     }
     else if(commandString.equals("SER1"))
     {
-      ServoControlContra(SERVO1); // Arm links
+      s1LastPos = ServoControlContra(SERVO1); // Arm links
     }
     else if(commandString.equals("SER2"))
     {
-      ServoControl(SERVO2); // Arm Rechts
+      s2LastPos = ServoControl(SERVO2); // Arm Rechts
     }
     else if(commandString.equals("SER3"))
     {
-      ServoControl(SERVO3); // Hoofd
+      s3LastPos = ServoControl(SERVO3); // Hoofd
     }
     else if(commandString.equals("SER4"))
     {
-      ServoControl(SERVO4); // Nek onder
+      s4LastPos = ServoControl(SERVO4); // Nek onder
     }
     else if(commandString.equals("SER5"))
     {
-      ServoControl(SERVO5); // Nek boven
+      s5LastPos = ServoControl(SERVO5); // Nek boven
     }
     else if(commandString.equals("SER6"))
     {
-      ServoControl(SERVO6); // Oog links
-      ServoControlContra(SERVO7); // Oog Rechts
+      s6LastPos = ServoControl(SERVO6); // Oog links
+      s7LastPos = ServoControlContra(SERVO7); // Oog Rechts
     }
+    else if(commandString.equals("PRO1"))
+    {
+      Dans(); // Programma 1
+    }    
     else if(commandString.equals("PWM1"))
     {
       ZetLedPWM(ledPin); // Led ogen
@@ -190,16 +203,27 @@ void CheckActions()
 
 void InitializeWallE()
 {
-  ServoControlContraInitialize(SERVO1, 0); // Arm links omlaag = 0, omhoog = 623
-  ServoControlInitialize(SERVO2, 200); // Arm rechts omlaag = 200, omhoog = 800
-  ServoControlInitialize(SERVO3, 512); // Hoofd
-  ServoControlInitialize(SERVO4, 0); // Nek onder
-  ServoControlInitialize(SERVO5, 0); // Nek boven
-  ServoControlInitialize(SERVO6, 420); // Oog links
-  ServoControlInitialize(SERVO7, 600); // Oog rechts
+  s1LastPos = ServoControlContraInitialize(SERVO1, 0); // Arm links omlaag = 0, omhoog = 623
+  s2LastPos = ServoControlInitialize(SERVO2, 200); // Arm rechts omlaag = 200, omhoog = 800
+  s3LastPos = ServoControlInitialize(SERVO3, 512); // Hoofd
+  s4LastPos = ServoControlInitialize(SERVO4, 0); // Nek onder
+  s5LastPos = ServoControlInitialize(SERVO5, 0); // Nek boven
+  s6LastPos = ServoControlInitialize(SERVO6, 420); // Oog links
+  s7LastPos = ServoControlInitialize(SERVO7, 600); // Oog rechts
+  
   ZetLedPWM(ledPin); // Led ogen
   MotorControl("STOP");
+  
   Serial.println("Klaar initialiseren Servo's");
+}
+
+void Dans()
+{
+  Serial.println("Programma 1");
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 3);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 3);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 3);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 3);  
 }
 
 void PrintText(String melding)
@@ -281,37 +305,64 @@ void MotorAction(bool a, bool b, bool c, bool d, String melding)
 }
 
 // Function to move servo to specific position
-void ServoControl(int servoOut)
+int ServoControl(int servoOut)
 {
   int waarde = (inputString.substring(5,(inputString.length() - 1))).toInt();
   ServoPWM(servoOut, waarde);
+
+  return waarde;
 }
 
 // Function to move servo to specific position
-void ServoControlContra(int servoOut)
+int ServoControlContra(int servoOut)
 {
   int waarde = (inputString.substring(5,(inputString.length() - 1))).toInt();
   ServoPWMContra(servoOut, waarde);
+
+  return waarde;
 }
 
 // Function to move servo to specific position
-void ServoControlInitialize(int servoOut, int waarde)
+int ServoControlInitialize(int servoOut, int waarde)
 {
   //ServoPWMRange(servoOut, 0, waarde);
   ServoPWM(servoOut, waarde);
+
+  return waarde;
 }
 
-void ServoControlContraInitialize(int servoOut, int waarde)
+int ServoControlContraInitialize(int servoOut, int waarde)
 {
   ServoPWMContra(servoOut, waarde);
+
+  return waarde;
 }
 
-void ServoPWMRange(int servoOut, int pos1, int pos2)
+int ServoPWMRange(int servoOut, int pos1, int pos2, int interval)
 {
-  for (int i = pos1; i <= pos2; i++)
+  int i = 0;
+  
+  // Servo positie oplopend of aflopen
+  if (pos1 <= pos2)
   {
-    ServoPWM(servoOut, i);
+    Serial.println("1- Pos1 : " + String(pos1));
+    for (i = pos1; i <= pos2; i++)
+    {
+      ServoPWM(servoOut, i);
+      delay(interval);
+    }
   }
+  else if (pos1 > pos2)
+  {
+    Serial.println("2 - Pos1 : " + String(pos1));
+    for (i = pos1; i >= pos2; i--)
+    {
+      ServoPWM(servoOut, i);
+      delay(interval);
+    }
+  }
+
+  return i;
 }
 
 void ServoPWM(int servoOut, int waarde)
