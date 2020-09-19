@@ -220,10 +220,11 @@ void InitializeWallE()
 void Dans()
 {
   Serial.println("Programma 1");
-  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 3);
-  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 3);
-  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 3);
-  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 3);  
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 2);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 2);
+  s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);  
 }
 
 void PrintText(String melding)
@@ -340,13 +341,11 @@ int ServoControlContraInitialize(int servoOut, int waarde)
 
 int ServoPWMRange(int servoOut, int pos1, int pos2, int interval)
 {
-  int i = 0;
-  
-  // Servo positie oplopend of aflopen
+  // Bepaal of de Servo positie oplopend of aflopen is
   if (pos1 <= pos2)
   {
     Serial.println("1- Pos1 : " + String(pos1));
-    for (i = pos1; i <= pos2; i++)
+    for (int i = pos1; i <= pos2; i++)
     {
       ServoPWM(servoOut, i);
       delay(interval);
@@ -355,14 +354,15 @@ int ServoPWMRange(int servoOut, int pos1, int pos2, int interval)
   else if (pos1 > pos2)
   {
     Serial.println("2 - Pos1 : " + String(pos1));
-    for (i = pos1; i >= pos2; i--)
+    for (int i = pos1; i >= pos2; i--)
     {
       ServoPWM(servoOut, i);
       delay(interval);
     }
   }
 
-  return i;
+  // Return de waarde waar de servo naar toe is gegaan.
+  return pos2;
 }
 
 void ServoPWM(int servoOut, int waarde)
