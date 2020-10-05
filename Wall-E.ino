@@ -111,6 +111,8 @@ void CheckActions()
     stringComplete = false;
     GetCommand();
 
+    //PrintText(commandString);
+
     if(commandString.equals("CONN"))
     {
       PrintText("Connected");
