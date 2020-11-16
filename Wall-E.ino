@@ -159,7 +159,7 @@ void CheckActions()
     }
     else if(commandString.equals("PRO1"))
     {
-      Dans(); // Programma 1
+      Demo1(); // Programma 1
     }    
     else if(commandString.equals("PWM1"))
     {
@@ -219,14 +219,72 @@ void InitializeWallE()
   Serial.println("Klaar initialiseren Servo's");
 }
 
-void Dans()
+void Demo1()
 {
   Serial.println("Programma 1");
+
+  // Led ogen aan
+  analogWrite(ledPin, 10);  
+  
+  // Geluid
+  ZetGeluidAanUit();
+
+  // Linker arm servo laten bewegen
+  Linkerarm(); 
+
+  // Hoofd laten bewegen
+  Hoofd();
+
+  // Ogen laten bewegen
+  Ogen();
+
+  // Zet de motorsnelheid
+  analogWrite(enA, 150);
+  analogWrite(enB, 150);
+
+  // motoren laten draaien
+  MotorControl("VOOR");
+  Linkerarm();
+  delay(500);
+  MotorControl("ACHTER");
+  Hoofd();
+  delay(1400);
+  MotorControl("LINKS");
+  delay(1500);
+  MotorControl("RECHTS");
+  delay(1500);
+  MotorControl("STOP");
+
+  // Led ogen uit
+  analogWrite(ledPin, 0);
+
+  // Geluid uit
+  ZetGeluidAanUit();
+}
+
+void Linkerarm()
+{
   s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);
   s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 2);
   s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);
   s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 600, 2);
   s1LastPos = ServoPWMRange(SERVO1, s1LastPos, 1000, 2);  
+}
+
+void Hoofd()
+{
+  s3LastPos = ServoPWMRange(SERVO3, s3LastPos, 200, 2);
+  s3LastPos = ServoPWMRange(SERVO3, s3LastPos, 800, 2);
+  s3LastPos = ServoPWMRange(SERVO3, s3LastPos, 512, 2);  
+}
+
+void Ogen()
+{
+  s6LastPos = ServoPWMRange(SERVO6, s6LastPos, 750, 2);
+  s7LastPos = ServoPWMRange(SERVO7, s7LastPos, 250, 2);
+  delay(1000);
+  s6LastPos = ServoPWMRange(SERVO6, s6LastPos, 450, 2);
+  s7LastPos = ServoPWMRange(SERVO7, s7LastPos, 600, 2);    
 }
 
 void PrintText(String melding)
