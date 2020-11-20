@@ -67,7 +67,7 @@ long previousMillis = 0;
 long interval = 5000;  // Check om de 1 seconde het voltage
 
 // Test
-#define interruptPin 2  // not used at the moment
+#define interruptPin 2  // Used for Demo1
 
 const int ledPin = 6;
 boolean isLedOn = false;
@@ -88,7 +88,7 @@ void setup()
   pinMode(ledPin,OUTPUT);
   pinMode(interruptPin, INPUT_PULLUP);
   
-  attachInterrupt(digitalPinToInterrupt(interruptPin), ButtonClickedISR, CHANGE); // not used
+  attachInterrupt(digitalPinToInterrupt(interruptPin), ButtonClickedISR, CHANGE); 
   
   //initDisplay();
   Serial.println("Connected");
@@ -502,6 +502,7 @@ void ButtonClickedISR()
 {
   // Stuur een bericht naar de computer terug. 
   Serial.println("Button clicked.");
+  Demo1();
 }
 
 void PlayFirst()
